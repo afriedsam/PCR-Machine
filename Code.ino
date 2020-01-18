@@ -257,7 +257,7 @@ void setup() {
   lcd.begin (16,2);
   lcd.setBacklightPin(3,POSITIVE);
   lcd.setBacklight(HIGH);
-  Serial.begin(9600);
+  //Serial.begin(9600);
   delay(10000);
   pinMode(8, INPUT);
   digitalWrite(8, HIGH);
