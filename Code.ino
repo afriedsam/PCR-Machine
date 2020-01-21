@@ -124,8 +124,8 @@ void denature() {
    lcd.setCursor(0,0);
    lcd.print("PHASE: DENATURE");
    lcd.setCursor(0,1);
-   lcd.print("CYCLE: ");
-   lcd.setCursor(8,1);
+   lcd.print("CYCLE:");
+   lcd.setCursor(7,1);
    lcd.print(currentCycle);
    lcd.setCursor(10,1);
    lcd.print(temp);
@@ -144,7 +144,11 @@ void prepAnnealing() {
   lcd.setCursor(5,0);
   lcd.print("COOLING");
   lcd.setCursor(2,1);
-  lcd.print("Temp: " + String(temp) + "C");
+  lcd.print("Temp: ");
+  if (isnan(temp) == false) {
+    lcd.setCursor(8,1);
+    lcd.print(temp);
+  }
   if (temp >= annealingTemp + 0.25 || isnan(temp)) {
     prepAnnealing();
   }
@@ -166,8 +170,8 @@ void anneal() {
    lcd.setCursor(0,0);
    lcd.print("PHASE: ANNEAL");
    lcd.setCursor(0,1);
-   lcd.print("CYCLE: ");
-   lcd.setCursor(8,1);
+   lcd.print("CYCLE:");
+   lcd.setCursor(7,1);
    lcd.print(currentCycle);
    lcd.setCursor(10,1);
    lcd.print(temp);
@@ -186,7 +190,11 @@ void prepExtension() {    //heat back up
   lcd.setCursor(5,0);
   lcd.print("HEATING");
   lcd.setCursor(2,1);
-  lcd.print("Temp: " + String(temp) + "C");
+  lcd.print("Temp: ");
+  if (isnan(temp) == false) {
+    lcd.setCursor(8,1);
+    lcd.print(temp);
+  }
   if (temp < 72 || isnan(temp)) {
     prepExtension();
   }
@@ -207,11 +215,9 @@ void extend() {
    lcd.clear();
    lcd.setCursor(0,0);
    lcd.print("PHASE: EXTEND");
-   lcd.setCursor(2,1);
-   lcd.print("CYCLE: " + currentCycle);
    lcd.setCursor(0,1);
-   lcd.print("CYCLE: ");
-   lcd.setCursor(8,1);
+   lcd.print("CYCLE:");
+   lcd.setCursor(7,1);
    lcd.print(currentCycle);
    lcd.setCursor(10,1);
    lcd.print(temp);
