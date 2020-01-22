@@ -1,7 +1,3 @@
-#include <Wire.h>
-#include <LiquidCrystal_I2C.h>
-LiquidCrystal_I2C lcd(0x27, 2,1,0,4,5,6,7);
-
 /* Pin Layout:
  *  LCD
  *    SDA to A4 on arduino
@@ -9,6 +5,10 @@ LiquidCrystal_I2C lcd(0x27, 2,1,0,4,5,6,7);
  *    VCC to 5v on arduino
  *    GND to GND on arduino
 */
+
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 2,1,0,4,5,6,7);
 
 void setup() {
   lcd.begin (16,2);
