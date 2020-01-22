@@ -1,10 +1,3 @@
-#include <Adafruit_MAX31855.h>
-#define MAXDO   3
-#define MAXCS   4
-#define MAXCLK  5
-Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
-double temp = thermocouple.readCelsius();
-
 /* Pin Layout:
  *  Thermocouple
  *    DO to D3 on arduino
@@ -13,6 +6,13 @@ double temp = thermocouple.readCelsius();
  *    VCC to 5V on arduino
  *    GND to GND on arduino
 */
+
+#include <Adafruit_MAX31855.h>
+#define MAXDO   3
+#define MAXCS   4
+#define MAXCLK  5
+Adafruit_MAX31855 thermocouple(MAXCLK, MAXCS, MAXDO);
+double temp = thermocouple.readCelsius();
 
 void setup() {
   Serial.begin(9600);
