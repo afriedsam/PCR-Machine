@@ -1,0 +1,8 @@
+I do not reccomend putting everything together and running the master code file and expecting everything to work on the first try.
+If you wish to replicate this project I reccomend testing all of your components seperately before testing them all together.
+I have broken the master code up into 4 files.
+  1) A code to test the relay
+  2) A code to test the thermocouple (temperature sensor)
+  3) A code to test the Joystick
+  4) A code to test the LCD
+Once you have tested all these and made sure that everything works, then you can start working on putting everything together.
