@@ -27,9 +27,16 @@ int cycles = 1;
 int currentCycle = 1;
 long startTime;
 long timeEllapsed;
+long firstDenaturationDuration;
+int fDDSeconds = 0;
+int fDDMins = 02;
+long lastExtensionDuration;
+int fEDSeconds = 0;
+int fEDMins = 05;
 long endTime;
 long remainder;
 double annealingTemp = 50.00;
+
 void heaterOn() {digitalWrite(13, HIGH);}
 void fanOn() {digitalWrite(13, LOW);}
 
@@ -48,6 +55,48 @@ void getCycles() {
   }
   if (digitalRead(8) == 1) {
     getCycles();
+  }
+}
+  
+void getFirstDenaturationDuration() {
+  lcd.setCursor(0,0);
+  lcd.print("1st Denaturation");
+  lcd.setCursor(0,1);
+  lcd.print("Time: ");
+  lcd.setCursor(6,1);
+  lcd.print(fDDMins);
+  lcd.setCursor(7,1);
+  lcd.print(":");
+  lcd.setCursor(8,1);
+  if (fDDSeconds > 59) {
+    fDDSeconds = 1;
+    fDDMins += 1;
+    delay(250);
+  }
+  if (fDDSeconds < 0) {
+    fDDSeconds = 59;
+    fDDMins -= 1;
+    delay(250);
+  }
+  if (fDDSeconds < 10 && fDDSeconds > 0) {
+    lcd.print("0");
+    lcd.setCursor(9,1);
+    lcd.print(fDDSeconds);
+  }
+  if (fDDSeconds == 0) {
+    lcd.print("00");
+  }
+  if (analogRead(0) < 100 && fDDMins >= 0 && fDDSeconds > 30) {
+    fDDSeconds -= 1;
+    delay(400);
+  }
+  if (analogRead(0) > 900 && fDDMins < 8) {
+    fDDSeconds += 1;
+    delay(400);
+  }
+  firstDenaturationDuration = (fDDMins * 60000) + (fDDSeconds * 1000);
+  if (digitalRead(8) == 1) {
+    getFirstDenaturationDuration();
   }
 }
 
@@ -69,6 +118,48 @@ void getAnnealTemp() {
   }
 }
 
+void getLastExtensionDuration() {
+  lcd.setCursor(1,0);
+  lcd.print("Last Extension");
+  lcd.setCursor(0,1);
+  lcd.print("Time: ");
+  lcd.setCursor(6,1);
+  lcd.print(fEDMins);
+  lcd.setCursor(7,1);
+  lcd.print(":");
+  lcd.setCursor(8,1);
+  if (fEDSeconds > 59) {
+    fEDSeconds = 1;
+    fEDMins += 1;
+    delay(250);
+  }
+  if (fEDSeconds < 0) {
+    fEDSeconds = 59;
+    fEDMins -= 1;
+    delay(250);
+  }
+  if (fEDSeconds < 10 && fEDSeconds > 0) {
+    lcd.print("0");
+    lcd.setCursor(9,1);
+    lcd.print(fEDSeconds);
+  }
+  if (fEDSeconds == 0) {
+    lcd.print("00");
+  }
+  if (analogRead(0) < 100 && fEDMins >= 1 && fEDSeconds > 0) {
+    fEDSeconds -= 1;
+    delay(400);
+  }
+  if (analogRead(0) > 900 && fEDMins < 8) {
+    fEDSeconds += 1;
+    delay(400);
+  }
+  lastExtensionDuration = (fEDMins * 60000) + (fEDSeconds * 1000);
+  if (digitalRead(8) == 1) {
+    getLastExtensionDuration();
+  }
+}
+
 void enter() {
   lcd.setCursor(2,0);
   lcd.print("FRIEDSAM PCR");
@@ -83,7 +174,13 @@ void getInput() {
   getCycles();
   lcd.clear();
   delay(500);
+  getFirstDenaturationDuration();
+  lcd.clear();
+  delay(500);
   getAnnealTemp();
+  lcd.clear();
+  delay(500);
+  getLastExtensionDuration();
   lcd.clear();
   delay(500);
   enter();
@@ -232,7 +329,8 @@ void PCR() {
   for (int i = 0; i <= cycles-1; i++) {
     prepDenaturation();
     lcd.clear();
-    duration = 30000;
+    if (currentCycle == 1) {duration = firstDenaturationDuration;}
+    else {duration = 30000;}
     startTime = millis();
     denature();
     lcd.clear();
@@ -244,7 +342,8 @@ void PCR() {
     lcd.clear();
     prepExtension();
     lcd.clear();
-    duration = 60000;
+    if (cycles - currentCycle == 0) {duration = lastExtensionDuration;}
+    else {duration = 60000;}
     startTime = millis();
     extend();
     lcd.clear();
