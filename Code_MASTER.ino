@@ -28,11 +28,11 @@ int currentCycle = 1;
 long startTime;
 long timeEllapsed;
 long firstDenaturationDuration;
-int fDDSeconds = 0;
-int fDDMins = 02;
+long fDDSeconds = 0;
+long fDDMins = 02;
 long lastExtensionDuration;
-int fEDSeconds = 0;
-int fEDMins = 05;
+long fEDSeconds = 0;
+long fEDMins = 05;
 long endTime;
 long remainder;
 double annealingTemp = 50.00;
@@ -43,15 +43,15 @@ void fanOn() {digitalWrite(13, LOW);}
 void getCycles() {
   lcd.setCursor(5,0);
   lcd.print("CYCLES:");
-  lcd.setCursor(8,1);
+  lcd.setCursor(7,1);
   lcd.print(cycles);
   if (analogRead(0) < 100 && cycles >= 2) {
     cycles -= 1;
-    delay(400);
+    delay(200);
   }
   if (analogRead(0) > 900) {
     cycles += 1;
-    delay(400);
+    delay(200);
   }
   if (digitalRead(8) == 1) {
     getCycles();
@@ -67,32 +67,38 @@ void getFirstDenaturationDuration() {
   lcd.print(fDDMins);
   lcd.setCursor(7,1);
   lcd.print(":");
-  lcd.setCursor(8,1);
   if (fDDSeconds > 59) {
-    fDDSeconds = 1;
     fDDMins += 1;
+    fDDSeconds = 0;
     delay(250);
   }
-  if (fDDSeconds < 0) {
-    fDDSeconds = 59;
+  if (fDDSeconds == 0 && analogRead(0) < 100) {
     fDDMins -= 1;
+    fDDSeconds = 59;
     delay(250);
+  }
+  if (fDDSeconds >= 9) {
+    lcd.setCursor(8,1);
+    lcd.print(fDDSeconds);
   }
   if (fDDSeconds < 10 && fDDSeconds > 0) {
+    lcd.setCursor(8,1);
     lcd.print("0");
     lcd.setCursor(9,1);
     lcd.print(fDDSeconds);
   }
   if (fDDSeconds == 0) {
+    lcd.setCursor(8,1);
     lcd.print("00");
   }
-  if (analogRead(0) < 100 && fDDMins >= 0 && fDDSeconds > 30) {
+  firstDenaturationDuration = ((fDDMins * 60000) + (fDDSeconds * 1000));
+  if (analogRead(0) < 100 && firstDenaturationDuration>30000) {
     fDDSeconds -= 1;
-    delay(400);
+    delay(200);
   }
   if (analogRead(0) > 900 && fDDMins < 8) {
     fDDSeconds += 1;
-    delay(400);
+    delay(200);
   }
   firstDenaturationDuration = (fDDMins * 60000) + (fDDSeconds * 1000);
   if (digitalRead(8) == 1) {
@@ -107,11 +113,11 @@ void getAnnealTemp() {
   lcd.print(annealingTemp);
   if (analogRead(0) < 100 && annealingTemp >= 49) {
     annealingTemp -= 0.25;
-    delay(400);
+    delay(200);
   }
   if (analogRead(0) > 900) {
     annealingTemp += 0.25;
-    delay(400);
+    delay(200);
   }
   if (digitalRead(8) == 1) {
     getAnnealTemp();
@@ -127,32 +133,38 @@ void getLastExtensionDuration() {
   lcd.print(fEDMins);
   lcd.setCursor(7,1);
   lcd.print(":");
-  lcd.setCursor(8,1);
   if (fEDSeconds > 59) {
-    fEDSeconds = 1;
     fEDMins += 1;
+    fEDSeconds = 0;
     delay(250);
   }
-  if (fEDSeconds < 0) {
-    fEDSeconds = 59;
+  if (fEDSeconds == 0 && analogRead(0) < 100) {
     fEDMins -= 1;
+    fEDSeconds = 59;
     delay(250);
+  }
+  if (fEDSeconds >= 9) {
+    lcd.setCursor(8,1);
+    lcd.print(fEDSeconds);
   }
   if (fEDSeconds < 10 && fEDSeconds > 0) {
+    lcd.setCursor(8,1);
     lcd.print("0");
     lcd.setCursor(9,1);
     lcd.print(fEDSeconds);
   }
   if (fEDSeconds == 0) {
+    lcd.setCursor(8,1);
     lcd.print("00");
   }
-  if (analogRead(0) < 100 && fEDMins >= 1 && fEDSeconds > 0) {
+  lastExtensionDuration = ((fEDMins * 60000) + (fEDSeconds * 1000));
+  if (analogRead(0) < 100 && lastExtensionDuration>60000) {
     fEDSeconds -= 1;
-    delay(400);
+    delay(200);
   }
   if (analogRead(0) > 900 && fEDMins < 8) {
     fEDSeconds += 1;
-    delay(400);
+    delay(200);
   }
   lastExtensionDuration = (fEDMins * 60000) + (fEDSeconds * 1000);
   if (digitalRead(8) == 1) {
@@ -362,8 +374,7 @@ void setup() {
   lcd.begin (16,2);
   lcd.setBacklightPin(3,POSITIVE);
   lcd.setBacklight(HIGH);
-  //Serial.begin(9600);
-  delay(10000);
+  Serial.begin(9600);
   pinMode(8, INPUT);
   digitalWrite(8, HIGH);
   getInput();
