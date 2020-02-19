@@ -1,7 +1,7 @@
 /* Pin Layout:
  *  JOYSTICK:
  *    X to A0 on Arduino
- *    SW to D8 on Arduino
+ *    SW to D2 on Arduino
  *    VCC to 5V on Arduino
  *    GND to GND on Arduino
 */
