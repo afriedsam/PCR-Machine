@@ -1,7 +1,7 @@
 /* Pin Layout:
  *  JOYSTICK:
  *    X to A0
- *    SW to D8
+ *    SW to D2
  *  LCD
  *    SDA to A4
  *    SCL to A5
